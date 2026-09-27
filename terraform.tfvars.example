@@ -1,0 +1,37 @@
+location = "italynorth"
+
+address_space = "10.0.0.0/22"
+
+enable_encryption_at_host = false
+virtual_machine_sku       = "Standard_D2s_v4"
+
+virtual_machine_image = {
+  publisher = "Canonical"
+  offer     = "0001-com-ubuntu-server-jammy"
+  sku       = "22_04-lts-gen2"
+  version   = "latest"
+}
+
+subnets = {
+  AzureBastionSubnet = {
+    size                       = 26
+    has_nat_gateway            = false
+    has_network_security_group = false
+  }
+  private_endpoints = {
+    size                       = 28
+    has_nat_gateway            = false
+    has_network_security_group = true
+  }
+  virtual_machines = {
+    size                       = 24
+    has_nat_gateway            = true
+    has_network_security_group = false
+  }
+}
+
+tags = {
+  type       = "avm"
+  env        = "demo"
+  managed_by = "terraform"
+}

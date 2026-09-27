@@ -1,0 +1,53 @@
+# Terraform working directories and local lock files
+**/.terraform/*
+.terraform.tfstate.lock.info
+
+# Keep the provider dependency lock file in version control
+!.terraform.lock.hcl
+
+# Terraform state can contain sensitive values
+*.tfstate
+*.tfstate.*
+
+# Saved Terraform plans can contain sensitive values
+*.tfplan
+tfplan
+tfplan*
+
+# Local Terraform recovery archives
+.terraform-backups/
+
+# Local variable values
+*.tfvars
+*.tfvars.json
+!*.tfvars.example
+
+# Crash logs
+crash.log
+crash.*.log
+
+# Local override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Terraform CLI configuration
+.terraformrc
+terraform.rc
+
+# Local environment and credential files
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.pfx
+*.p12
+
+# IDE and operating-system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+Desktop.ini

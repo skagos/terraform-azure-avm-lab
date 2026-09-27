@@ -1,0 +1,49 @@
+module "virtual_machine" {
+  source  = "Azure/avm-res-compute-virtualmachine/azurerm"
+  version = "0.19.3"
+
+  resource_group_name        = module.resource_group.name
+  os_type                    = "linux"
+  name                       = local.resource_names.virtual_machine_name
+  sku_size                   = var.virtual_machine_sku
+  location                   = var.location
+  zone                       = "1"
+  encryption_at_host_enabled = var.enable_encryption_at_host
+
+  generated_secrets_key_vault_secret_config = {
+    key_vault_resource_id = module.key_vault.resource_id
+  }
+
+  managed_identities = {
+    system_assigned = true
+  }
+
+  source_image_reference = var.virtual_machine_image
+
+  network_interfaces = {
+    private = {
+      name = local.resource_names.network_interface_name
+      ip_configurations = {
+        private = {
+          name                          = "private"
+          private_ip_subnet_resource_id = module.virtual_network.subnets["virtual_machines"].resource_id
+        }
+      }
+    }
+  }
+
+  diagnostic_settings = local.diagnostic_settings
+  tags                = var.tags
+
+  depends_on = [module.key_vault, azapi_update_resource.enable_encryption_at_host]
+}
+
+resource "azapi_update_resource" "enable_encryption_at_host" {
+  count = var.enable_encryption_at_host ? 1 : 0
+
+  type = "Microsoft.Features/featureProviders/subscriptionFeatureRegistrations@2021-07-01"
+  body = {
+    properties = {}
+  }
+  resource_id = "/subscriptions/${data.azurerm_client_config.current.subscription_id}/providers/Microsoft.Features/featureProviders/Microsoft.Compute/subscriptionFeatureRegistrations/EncryptionAtHost"
+}
